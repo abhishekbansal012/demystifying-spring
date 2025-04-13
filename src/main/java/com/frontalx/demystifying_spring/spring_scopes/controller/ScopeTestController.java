@@ -59,5 +59,10 @@ public class ScopeTestController {
     public String getRequestScopedId() {
         return requestBean.getScopeName();
     }
+
+    @GetMapping("/session-scope")
+    public String getSessionScopedId() {
+        return "Session ID: " + sessionBean.getScopeName();
+    }
 }
 
