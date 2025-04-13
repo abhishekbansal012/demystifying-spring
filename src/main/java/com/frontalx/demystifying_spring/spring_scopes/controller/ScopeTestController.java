@@ -54,5 +54,10 @@ public class ScopeTestController {
 
         return results;
     }
+
+    @GetMapping("/request-scope")
+    public String getRequestScopedId() {
+        return requestBean.getScopeName();
+    }
 }
 
