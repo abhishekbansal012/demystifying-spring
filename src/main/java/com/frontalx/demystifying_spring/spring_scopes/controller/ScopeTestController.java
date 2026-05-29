@@ -1,17 +1,23 @@
 package com.frontalx.demystifying_spring.spring_scopes.controller;
 
-import com.frontalx.demystifying_spring.spring_scopes.scopes.*;
-import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.frontalx.demystifying_spring.spring_scopes.scopes.ApplicationScopeBean;
+import com.frontalx.demystifying_spring.spring_scopes.scopes.PrototypeBean;
+import com.frontalx.demystifying_spring.spring_scopes.scopes.RequestBean;
+import com.frontalx.demystifying_spring.spring_scopes.scopes.SessionBean;
+import com.frontalx.demystifying_spring.spring_scopes.scopes.SingletonBean;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/scope")
@@ -63,6 +69,21 @@ public class ScopeTestController {
     @GetMapping("/session-scope")
     public String getSessionScopedId() {
         return "Session ID: " + sessionBean.getScopeName();
+    }
+
+    /**
+     * Demonstrates shared mutable state in a singleton bean.
+     * Every request increments the same counter — proving the bean is shared.
+     * Try hitting this endpoint rapidly from multiple tabs/browsers to see the count climb.
+     */
+    @GetMapping("/singleton-state")
+    public Map<String, Object> singletonSharedState() {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("countBeforeThisRequest", singletonBean.getRequestCount());
+        result.put("countAfterIncrement", singletonBean.incrementAndGet());
+        result.put("beanIdentity", singletonBean.hashCode());
+        result.put("message", "This counter never resets (unless the app restarts). All users share it.");
+        return result;
     }
 }
 
