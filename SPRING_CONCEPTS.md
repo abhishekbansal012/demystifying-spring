@@ -21,32 +21,38 @@ src/main/java/com/frontalx/demystifying_spring/
 │       ├── SessionBean.java
 │       └── ApplicationScopeBean.java
 │
-├── bean_lifecycle/
+├── bean_lifecycle/                         # ✅ Done
 │   ├── controller/
 │   │   └── LifecycleController.java
 │   └── beans/
-│       ├── InitDestroyBean.java            # @PostConstruct, @PreDestroy
-│       ├── InitializingDisposableBean.java  # InitializingBean, DisposableBean interfaces
-│       └── BeanPostProcessorDemo.java       # Custom BeanPostProcessor
+│       ├── AnnotationLifecycleBean.java    # @PostConstruct, @PreDestroy
+│       ├── InterfaceLifecycleBean.java     # InitializingBean, DisposableBean interfaces
+│       ├── FullLifecycleBean.java          # All mechanisms combined — shows exact order
+│       ├── BeanAwareDemo.java              # BeanNameAware, BeanFactoryAware, ApplicationContextAware
+│       └── CustomBeanPostProcessor.java    # Custom BeanPostProcessor
 │
-├── dependency_injection/
+├── dependency_injection/                    # ✅ Done
 │   ├── controller/
 │   │   └── DIController.java
 │   └── injection/
-│       ├── ConstructorInjection.java
-│       ├── SetterInjection.java
-│       ├── FieldInjection.java
-│       ├── QualifierDemo.java              # @Qualifier usage
-│       └── PrimaryDemo.java               # @Primary usage
+│       ├── MessageService.java             # Interface (multiple impls)
+│       ├── EmailService.java               # @Primary implementation
+│       ├── SmsService.java                 # @Qualifier target
+│       ├── PushNotificationService.java    # @Lazy
+│       ├── ConstructorInjectionDemo.java
+│       ├── SetterInjectionDemo.java
+│       ├── FieldInjectionDemo.java
+│       └── QualifierDemo.java              # @Qualifier usage
 │
-├── configuration/
+├── configuration/                           # ✅ Done
 │   ├── controller/
 │   │   └── ConfigController.java
 │   └── config/
+│       ├── AppProperties.java              # @ConfigurationProperties
+│       ├── ValueDemo.java                  # @Value injection
 │       ├── JavaConfig.java                 # @Configuration + @Bean
-│       ├── ConditionalConfig.java          # @Conditional, @ConditionalOnProperty
-│       ├── ProfileConfig.java             # @Profile
-│       └── PropertySourceDemo.java        # @Value, @ConfigurationProperties
+│       ├── ConditionalConfig.java          # @ConditionalOnProperty
+│       └── ProfileConfig.java             # @Profile
 │
 ├── aop_basics/
 │   ├── controller/
@@ -151,35 +157,36 @@ src/main/java/com/frontalx/demystifying_spring/
 - Scoped proxy usage with `ScopedProxyMode.TARGET_CLASS`
 - `ObjectFactory<T>` for prototype injection into singletons
 
-### 2. Bean Lifecycle
+### 2. Bean Lifecycle ✅ (Done)
 - `@PostConstruct` and `@PreDestroy` callbacks
 - `InitializingBean` and `DisposableBean` interfaces
-- Custom `init-method` and `destroy-method`
+- All mechanisms combined to show exact execution order
 - `BeanPostProcessor` — hook into bean initialization pipeline
-- `BeanFactoryPostProcessor` — modify bean definitions before instantiation
+- Aware interfaces (`BeanNameAware`, `BeanFactoryAware`, `ApplicationContextAware`)
 
-### 3. Dependency Injection
+### 3. Dependency Injection ✅ (Done)
 - Constructor injection (preferred)
 - Setter injection
 - Field injection (and why it's discouraged)
 - `@Qualifier` — disambiguate multiple beans of same type
 - `@Primary` — default bean selection
 - `@Lazy` — deferred initialization
+- `List<T>` injection — all implementations
 
-### 4. Configuration
+### 4. Configuration ✅ (Done)
 - `@Configuration` + `@Bean` — Java-based config
-- `@ComponentScan` — auto-detection
 - `@Profile` — environment-specific beans
-- `@Conditional` / `@ConditionalOnProperty` — conditional bean registration
-- `@Value` — inject properties
+- `@ConditionalOnProperty` — feature flags
+- `@Value` — inject properties with defaults and SpEL
 - `@ConfigurationProperties` — type-safe config binding
 
-### 5. AOP (Aspect-Oriented Programming)
+### 5. AOP (Aspect-Oriented Programming) ✅ (Done)
 - `@Aspect` declaration
 - `@Before`, `@After`, `@AfterReturning`, `@AfterThrowing`
 - `@Around` — full control over method execution
 - Pointcut expressions — `execution()`, `within()`, `@annotation()`
-- Custom annotations as pointcut targets
+- Custom annotations as pointcut targets (`@Timed`, `@Auditable`)
+- Reading annotation attributes from within aspects
 
 ### 6. Event Handling
 - `ApplicationEvent` and `ApplicationEventPublisher`
@@ -209,12 +216,14 @@ src/main/java/com/frontalx/demystifying_spring/
 - Custom `TaskExecutor` configuration
 - `CompletableFuture` return types with `@Async`
 
-### 10. Validation
+### 10. Validation ✅ (Done)
 - Bean Validation annotations (`@NotNull`, `@Size`, `@Email`, `@Pattern`)
 - `@Valid` / `@Validated` on controller parameters
 - Custom constraint annotations + `ConstraintValidator`
-- Validation groups
+- Nested object validation with `@Valid` on fields
+- Collection element validation
 - Method-level validation with `@Validated` on service classes
+- Structured error responses via `@ExceptionHandler`
 
 ### 11. Spring Data JPA
 - `JpaRepository` — CRUD + pagination
@@ -251,12 +260,12 @@ src/main/java/com/frontalx/demystifying_spring/
 | Priority | Concept | Complexity |
 |----------|---------|-----------|
 | ✅ | Bean Scopes | Medium |
-| 1 | Bean Lifecycle | Low |
-| 2 | Dependency Injection | Low |
-| 3 | Configuration | Low |
+| ✅ | Bean Lifecycle | Low |
+| ✅ | Dependency Injection | Low |
+| ✅ | Configuration | Low |
 | 4 | Exception Handling | Low |
-| 5 | Validation | Medium |
-| 6 | AOP Basics | Medium |
+| ✅ | Validation | Medium |
+| ✅ | AOP Basics | Medium |
 | 7 | Spring MVC Internals | Medium |
 | 8 | Event Handling | Medium |
 | 9 | Scheduling & Async | Medium |
