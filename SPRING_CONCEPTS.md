@@ -26,23 +26,27 @@ src/main/java/com/frontalx/demystifying_spring/
 │   │   └── LifecycleController.java
 │   └── beans/
 │       ├── AnnotationLifecycleBean.java    # @PostConstruct, @PreDestroy
-│       ├── InterfaceLifecycleBean.java     # InitializingBean, DisposableBean interfaces
-│       ├── FullLifecycleBean.java          # All mechanisms combined — shows exact order
+│       ├── InterfaceLifecycleBean.java     # InitializingBean, DisposableBean
+│       ├── FullLifecycleBean.java          # All mechanisms combined
 │       ├── BeanAwareDemo.java              # BeanNameAware, BeanFactoryAware, ApplicationContextAware
-│       └── CustomBeanPostProcessor.java    # Custom BeanPostProcessor
+│       ├── CustomBeanPostProcessor.java    # BeanPostProcessor
+│       ├── CustomInitMethodBean.java       # Plain class (no @Component)
+│       └── CustomInitMethodConfig.java     # @Bean(initMethod, destroyMethod)
 │
 ├── dependency_injection/                    # ✅ Done
 │   ├── controller/
 │   │   └── DIController.java
 │   └── injection/
 │       ├── MessageService.java             # Interface (multiple impls)
-│       ├── EmailService.java               # @Primary implementation
+│       ├── EmailService.java               # @Primary
 │       ├── SmsService.java                 # @Qualifier target
 │       ├── PushNotificationService.java    # @Lazy
 │       ├── ConstructorInjectionDemo.java
 │       ├── SetterInjectionDemo.java
 │       ├── FieldInjectionDemo.java
-│       └── QualifierDemo.java              # @Qualifier usage
+│       ├── QualifierDemo.java              # @Qualifier usage
+│       ├── CircularDependencyDemo.java     # Circular deps + resolution
+│       └── DependsOnDemo.java             # @DependsOn
 │
 ├── configuration/                           # ✅ Done
 │   ├── controller/
@@ -52,28 +56,49 @@ src/main/java/com/frontalx/demystifying_spring/
 │       ├── ValueDemo.java                  # @Value injection
 │       ├── JavaConfig.java                 # @Configuration + @Bean
 │       ├── ConditionalConfig.java          # @ConditionalOnProperty
-│       └── ProfileConfig.java             # @Profile
+│       ├── ProfileConfig.java             # @Profile
+│       ├── ImportedConfig.java            # @Import target
+│       ├── ImportDemoConfig.java          # @Import usage
+│       └── RelaxedBindingDemo.java        # Relaxed binding
 │
-├── aop_basics/
+├── aop_basics/                             # ✅ Done
 │   ├── controller/
 │   │   └── AopController.java
 │   ├── aspects/
-│   │   ├── LoggingAspect.java             # @Before, @After, @Around
+│   │   ├── LoggingAspect.java             # @Before, @After, @AfterReturning, @AfterThrowing
 │   │   ├── PerformanceAspect.java         # @Around for timing
-│   │   └── ExceptionAspect.java           # @AfterThrowing
+│   │   ├── AuditAspect.java              # Reads annotation attributes
+│   │   ├── OrderedAspectA.java           # @Order(1)
+│   │   └── OrderedAspectB.java           # @Order(2)
+│   ├── annotations/
+│   │   ├── Timed.java                    # Custom annotation → PerformanceAspect
+│   │   ├── Auditable.java               # Custom annotation → AuditAspect
+│   │   └── OrderedExecution.java         # Custom annotation → Ordered aspects
 │   └── service/
 │       └── AopTargetService.java
 │
-├── event_handling/
+├── validation/                             # ✅ Done
 │   ├── controller/
-│   │   └── EventController.java
-│   ├── events/
-│   │   └── CustomEvent.java               # ApplicationEvent subclass
-│   ├── publishers/
-│   │   └── EventPublisherService.java     # ApplicationEventPublisher
-│   └── listeners/
-│       ├── AnnotationListener.java        # @EventListener
-│       └── AsyncListener.java             # @Async + @EventListener
+│   │   └── ValidationController.java
+│   ├── dto/
+│   │   ├── UserDto.java                   # Standard annotations + @NoSpecialChars
+│   │   ├── AddressDto.java               # Nested validation target
+│   │   ├── OrderDto.java                 # Nested + collection validation
+│   │   ├── ProductDto.java              # Validation groups + payload
+│   │   └── RegistrationDto.java         # Cross-field validation
+│   ├── groups/
+│   │   ├── OnCreate.java                # Validation group marker
+│   │   ├── OnUpdate.java                # Validation group marker
+│   │   └── Severity.java               # Payload classes (Info, Warn, Error)
+│   ├── validators/
+│   │   ├── NoSpecialChars.java          # Custom constraint annotation
+│   │   ├── NoSpecialCharsValidator.java # ConstraintValidator impl
+│   │   ├── PasswordMatch.java          # Class-level cross-field annotation
+│   │   └── PasswordMatchValidator.java # Cross-field validator
+│   ├── handler/
+│   │   └── ValidationExceptionHandler.java # Structured error responses
+│   └── service/
+│       └── UserService.java              # Method-level @Validated
 │
 ├── exception_handling/
 │   ├── controller/
@@ -98,6 +123,17 @@ src/main/java/com/frontalx/demystifying_spring/
 │       ├── CustomFilter.java              # OncePerRequestFilter
 │       └── FilterConfig.java
 │
+├── event_handling/
+│   ├── controller/
+│   │   └── EventController.java
+│   ├── events/
+│   │   └── CustomEvent.java               # ApplicationEvent subclass
+│   ├── publishers/
+│   │   └── EventPublisherService.java     # ApplicationEventPublisher
+│   └── listeners/
+│       ├── AnnotationListener.java        # @EventListener
+│       └── AsyncListener.java             # @Async + @EventListener
+│
 ├── scheduling/
 │   ├── controller/
 │   │   └── SchedulingController.java
@@ -105,15 +141,6 @@ src/main/java/com/frontalx/demystifying_spring/
 │       ├── FixedRateTask.java             # @Scheduled(fixedRate)
 │       ├── CronTask.java                  # @Scheduled(cron)
 │       └── AsyncTask.java                 # @Async
-│
-├── validation/
-│   ├── controller/
-│   │   └── ValidationController.java
-│   ├── dto/
-│   │   └── UserDto.java                   # @Valid, @NotNull, @Size, etc.
-│   └── validators/
-│       ├── CustomConstraint.java          # Custom annotation
-│       └── CustomValidator.java           # ConstraintValidator impl
 │
 ├── spring_data/
 │   ├── controller/
@@ -156,10 +183,12 @@ src/main/java/com/frontalx/demystifying_spring/
 - Singleton, Prototype, Request, Session, Application
 - Scoped proxy usage with `ScopedProxyMode.TARGET_CLASS`
 - `ObjectFactory<T>` for prototype injection into singletons
+- Shared mutable state demo (singleton thread-safety pitfall)
 
 ### 2. Bean Lifecycle ✅ (Done)
 - `@PostConstruct` and `@PreDestroy` callbacks
 - `InitializingBean` and `DisposableBean` interfaces
+- `@Bean(initMethod, destroyMethod)` — third mechanism for third-party classes
 - All mechanisms combined to show exact execution order
 - `BeanPostProcessor` — hook into bean initialization pipeline
 - Aware interfaces (`BeanNameAware`, `BeanFactoryAware`, `ApplicationContextAware`)
@@ -172,28 +201,41 @@ src/main/java/com/frontalx/demystifying_spring/
 - `@Primary` — default bean selection
 - `@Lazy` — deferred initialization
 - `List<T>` injection — all implementations
+- Circular dependency resolution (setter vs constructor)
+- `@DependsOn` — explicit bean ordering
 
 ### 4. Configuration ✅ (Done)
-- `@Configuration` + `@Bean` — Java-based config
+- `@Configuration` + `@Bean` — Java-based config (Full Mode vs Lite Mode)
 - `@Profile` — environment-specific beans
 - `@ConditionalOnProperty` — feature flags
 - `@Value` — inject properties with defaults and SpEL
 - `@ConfigurationProperties` — type-safe config binding
+- `@Import` — pulling in config classes
+- Relaxed binding (kebab-case, camelCase, UPPER_CASE)
+- Bean creation annotations reference (all stereotypes)
+- CGLIB proxy explanation
 
 ### 5. AOP (Aspect-Oriented Programming) ✅ (Done)
 - `@Aspect` declaration
 - `@Before`, `@After`, `@AfterReturning`, `@AfterThrowing`
 - `@Around` — full control over method execution
 - Pointcut expressions — `execution()`, `within()`, `@annotation()`
-- Custom annotations as pointcut targets (`@Timed`, `@Auditable`)
+- Custom annotations as pointcut targets (`@Timed`, `@Auditable`, `@OrderedExecution`)
 - Reading annotation attributes from within aspects
+- Aspect ordering with `@Order`
+- Self-invocation trap (proxy bypass)
 
-### 6. Event Handling
-- `ApplicationEvent` and `ApplicationEventPublisher`
-- `@EventListener` — annotation-based listeners
-- `@TransactionalEventListener` — phase-bound events
-- `@Async` event listeners — non-blocking processing
-- Custom event objects
+### 6. Validation ✅ (Done)
+- Bean Validation annotations (`@NotNull`, `@Size`, `@Email`, `@Pattern`)
+- `@Valid` / `@Validated` on controller parameters
+- Custom constraint annotations + `ConstraintValidator`
+- Nested object validation with `@Valid` on fields
+- Collection element validation
+- Method-level validation with `@Validated` on service classes
+- Validation groups (`OnCreate`, `OnUpdate`)
+- Payload (severity metadata)
+- Cross-field validation (`@PasswordMatch` class-level)
+- Structured error responses via `@ExceptionHandler`
 
 ### 7. Exception Handling
 - `@ExceptionHandler` — controller-level handling
@@ -209,21 +251,19 @@ src/main/java/com/frontalx/demystifying_spring/
 - Content negotiation
 - `ResponseEntity` usage
 
-### 9. Scheduling & Async
+### 9. Event Handling
+- `ApplicationEvent` and `ApplicationEventPublisher`
+- `@EventListener` — annotation-based listeners
+- `@TransactionalEventListener` — phase-bound events
+- `@Async` event listeners — non-blocking processing
+- Custom event objects
+
+### 10. Scheduling & Async
 - `@EnableScheduling` + `@Scheduled`
 - Fixed rate vs fixed delay vs cron expressions
 - `@EnableAsync` + `@Async`
 - Custom `TaskExecutor` configuration
 - `CompletableFuture` return types with `@Async`
-
-### 10. Validation ✅ (Done)
-- Bean Validation annotations (`@NotNull`, `@Size`, `@Email`, `@Pattern`)
-- `@Valid` / `@Validated` on controller parameters
-- Custom constraint annotations + `ConstraintValidator`
-- Nested object validation with `@Valid` on fields
-- Collection element validation
-- Method-level validation with `@Validated` on service classes
-- Structured error responses via `@ExceptionHandler`
 
 ### 11. Spring Data JPA
 - `JpaRepository` — CRUD + pagination
@@ -250,7 +290,7 @@ src/main/java/com/frontalx/demystifying_spring/
 - Strategy pattern — interface + multiple implementations, inject `List<T>`
 - Template Method — abstract base class with hooks
 - Factory pattern — `FactoryBean<T>`
-- Observer pattern — Spring Events (cross-reference with #6)
+- Observer pattern — Spring Events (cross-reference with #9)
 - Proxy pattern — AOP proxies (cross-reference with #5)
 
 ---
@@ -263,16 +303,16 @@ src/main/java/com/frontalx/demystifying_spring/
 | ✅ | Bean Lifecycle | Low |
 | ✅ | Dependency Injection | Low |
 | ✅ | Configuration | Low |
-| 4 | Exception Handling | Low |
-| ✅ | Validation | Medium |
 | ✅ | AOP Basics | Medium |
-| 7 | Spring MVC Internals | Medium |
-| 8 | Event Handling | Medium |
-| 9 | Scheduling & Async | Medium |
-| 10 | Spring Data JPA | High |
-| 11 | Caching | Medium |
-| 12 | Actuator & Health | Low |
-| 13 | Design Patterns in Spring | Medium |
+| ✅ | Validation | Medium |
+| 1 | Exception Handling | Low |
+| 2 | Spring MVC Internals | Medium |
+| 3 | Event Handling | Medium |
+| 4 | Scheduling & Async | Medium |
+| 5 | Spring Data JPA | High |
+| 6 | Caching | Medium |
+| 7 | Actuator & Health | Low |
+| 8 | Design Patterns in Spring | Medium |
 
 ---
 
@@ -280,19 +320,19 @@ src/main/java/com/frontalx/demystifying_spring/
 
 Each module exposes endpoints under a descriptive base path:
 
-| Module | Base Path |
-|--------|-----------|
-| Bean Scopes | `/scope` |
-| Bean Lifecycle | `/lifecycle` |
-| Dependency Injection | `/di` |
-| Configuration | `/config` |
-| AOP | `/aop` |
-| Events | `/events` |
-| Exception Handling | `/exceptions` |
-| Spring MVC | `/mvc` |
-| Scheduling | `/scheduling` |
-| Validation | `/validation` |
-| Spring Data | `/data` |
-| Caching | `/cache` |
-| Actuator | `/actuator` (built-in) |
-| Design Patterns | `/patterns` |
+| Module | Base Path | Status |
+|--------|-----------|--------|
+| Bean Scopes | `/scope` | ✅ |
+| Bean Lifecycle | `/lifecycle` | ✅ |
+| Dependency Injection | `/di` | ✅ |
+| Configuration | `/config` | ✅ |
+| AOP | `/aop` | ✅ |
+| Validation | `/validation` | ✅ |
+| Exception Handling | `/exceptions` | Pending |
+| Spring MVC | `/mvc` | Pending |
+| Events | `/events` | Pending |
+| Scheduling | `/scheduling` | Pending |
+| Spring Data | `/data` | Pending |
+| Caching | `/cache` | Pending |
+| Actuator | `/actuator` (built-in) | Pending |
+| Design Patterns | `/patterns` | Pending |
